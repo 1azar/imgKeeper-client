@@ -2,10 +2,10 @@ package app
 
 import (
 	"fmt"
+	"imgKeeper-client/service"
 	"log"
 	"os"
 
-	"github.com/dimk00z/grpc-filetransfer/internal/client/service"
 	"github.com/spf13/cobra"
 )
 
