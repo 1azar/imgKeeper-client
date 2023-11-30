@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	imgKeeperv1 "github.com/1azar/imgKeeper-api-contracts/gen/go/imgKeeper"
+	"github.com/golang/protobuf/ptypes/empty"
 	"io"
 	"log"
 	"os"
@@ -111,7 +112,10 @@ func (s *ClientService) TransferFile() error {
 				cancel()
 			}
 		case ListFiles:
-
+			if err = s.getList(ctx, cancel); err != nil {
+				log.Fatal(err)
+				cancel()
+			}
 		}
 	}(s)
 
@@ -188,6 +192,28 @@ func (s *ClientService) download(ctx context.Context, cancel context.CancelFunc,
 	}
 
 	fmt.Printf("file %s has been downloaded.\n", fileName)
+	cancel()
+	return nil
+}
 
+func (s *ClientService) getList(ctx context.Context, cancel context.CancelFunc) error {
+	//stream, err := s.client.DownloadImg(ctx, &imgKeeperv1.ImgUploadReq{FileName: fileName})
+	stream, err := s.client.ImgList(ctx, &empty.Empty{})
+	if err != nil {
+		return err
+	}
+
+	for {
+		chunk, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return err
+		}
+
+		log.Println(string(chunk.Chunk))
+	}
+	log.Println("EOF")
 	return nil
 }

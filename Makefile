@@ -18,3 +18,8 @@ run6:
 
 run7:
 	go run main.go --addr=":44044" -f=cat3.png --method=download
+
+run8:
+	go run main.go --addr=":44044" -f=cat3.png --method=list
+
+
